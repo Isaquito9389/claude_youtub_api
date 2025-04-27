@@ -33,8 +33,14 @@
                         {% endif %}
                         
                         {% if video.duration %}
-                        <p class="text-gray-600 mb-4">
+                        <p class="text-gray-600 mb-2">
                             <i class="fas fa-clock mr-2"></i>{{ video.duration // 60 }}:{{ '%02d' % (video.duration % 60) }}
+                        </p>
+                        {% endif %}
+                        
+                        {% if video.format %}
+                        <p class="text-gray-600 mb-4">
+                            <i class="fas fa-cog mr-2"></i>Format: {{ video.format }}
                         </p>
                         {% endif %}
                         

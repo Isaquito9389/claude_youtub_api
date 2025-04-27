@@ -23,7 +23,7 @@
                 </div>
                 {% endif %}
 
-                <form method="POST" action="/download" class="space-y-4">
+                <form method="POST" action="/formats" class="space-y-4">
                     <div>
                         <label for="video_url" class="block text-gray-700 text-sm font-bold mb-2">URL de la vidéo YouTube</label>
                         <input type="url" id="video_url" name="video_url" 
@@ -31,7 +31,7 @@
                             placeholder="https://www.youtube.com/watch?v=..." required>
                     </div>
                     <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">
-                        <i class="fas fa-download mr-2"></i>Télécharger
+                        <i class="fas fa-search mr-2"></i>Rechercher les formats
                     </button>
                 </form>
             </div>
@@ -43,7 +43,9 @@
                 <ol class="list-decimal list-inside space-y-3 text-gray-700">
                     <li>Copiez l'URL de la vidéo YouTube que vous souhaitez télécharger.</li>
                     <li>Collez l'URL dans le champ ci-dessus.</li>
-                    <li>Cliquez sur le bouton "Télécharger".</li>
+                    <li>Cliquez sur "Rechercher les formats" pour voir les options disponibles.</li>
+                    <li>Choisissez le format et la qualité qui vous conviennent.</li>
+                    <li>Cliquez sur "Télécharger" pour le format choisi.</li>
                     <li>Attendez que la vidéo soit téléchargée et traitée.</li>
                     <li>Cliquez sur le bouton pour télécharger la vidéo sur votre appareil.</li>
                 </ol>
@@ -70,9 +72,9 @@
                 <div class="bg-white p-4 rounded-lg shadow-md">
                     <div class="flex items-center mb-2">
                         <i class="fas fa-desktop text-green-500 mr-2"></i>
-                        <h3 class="text-lg font-semibold">Haute qualité</h3>
+                        <h3 class="text-lg font-semibold">Choix de qualité</h3>
                     </div>
-                    <p class="text-gray-600">Téléchargez des vidéos en haute définition.</p>
+                    <p class="text-gray-600">Sélectionnez le format et la taille qui vous conviennent.</p>
                 </div>
                 <div class="bg-white p-4 rounded-lg shadow-md">
                     <div class="flex items-center mb-2">
