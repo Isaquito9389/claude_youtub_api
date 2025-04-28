@@ -1,12 +1,29 @@
-<!-- templates/formats.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Choisir le format - {{ video.title }}</title>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Meta tags SEO -->
+    <meta name="description" content="Téléchargez rapidement et gratuitement vos vidéos YouTube préférées en haute qualité (1080p, 720p, 480p, MP3). Convertisseur YouTube simple, sans inscription et sans publicité.">
+    <meta name="keywords" content="télécharger vidéo youtube, convertisseur youtube, youtube mp3, youtube downloader, youtube en mp4, télécharger youtube gratuit">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="YT Downloader">
+
+    <!-- Open Graph Tags pour les partages sociaux -->
+    <meta property="og:title" content="YT Downloader - Télécharger des vidéos YouTube Gratuitement">
+    <meta property="og:description" content="Téléchargez gratuitement vos vidéos YouTube préférées en HD, MP4, MP3 sans inscription. Simple, rapide et sécurisé.">
+    <meta property="og:image" content="{{ url_for('static', filename='img/yt-downloader-preview.jpg', _external=True) }}">
+    <meta property="og:url" content="{{ request.base_url }}">
+    <meta property="og:type" content="website">
+
+    <!-- Balise canonique pour éviter le contenu dupliqué -->
+    <link rel="canonical" href="{{ request.base_url }}">
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -54,25 +71,64 @@
                         <table class="w-full border-collapse">
                             <thead>
                                 <tr class="bg-gray-100">
-                                    <th class="px-4 py-2 text-left text-gray-700 font-bold">Qualité</th>
-                                    <th class="px-4 py-2 text-left text-gray-700 font-bold">Taille</th>
+                                    <th class="px-4 py-2 text-left text-gray-700 font-bold">Type de fichier</th>
+                                    <th class="px-4 py-2 text-left text-gray-700 font-bold">Taille du fichier</th>
                                     <th class="px-4 py-2 text-center text-gray-700 font-bold">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for format in video.formats %}
-                                <tr class="border-t hover:bg-red-50">
-                                    <td class="px-4 py-3 text-gray-700">{{ format.quality }}</td>
-                                    <td class="px-4 py-3 text-gray-700">{{ format.filesize }}</td>
-                                    <td class="px-4 py-3 text-center">
-                                        <form method="POST" action="/download_selected" class="inline">
-                                            <input type="hidden" name="format_id" value="{{ format.format_id }}">
-                                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-3 rounded-md transition duration-300">
-                                                <i class="fas fa-download mr-1"></i>Télécharger
-                                            </button>
-                                        </form>
+                                <!-- Onglet Vidéo -->
+                                <tr class="border-t border-b-2 bg-red-50">
+                                    <td colspan="3" class="px-4 py-2 font-bold text-red-600">
+                                        <i class="fas fa-video mr-2"></i>Vidéo
                                     </td>
                                 </tr>
+                                {% for format in video.formats %}
+                                    {% if format.type == 'video' %}
+                                    <tr class="border-t hover:bg-red-50">
+                                        <td class="px-4 py-2 text-gray-700">
+                                            {% if format.format_id == 'best' %}
+                                                {{ format.quality }}
+                                            {% else %}
+                                                {{ format.display_resolution if format.display_resolution else format.resolution }} {% if format.has_audio %}<i class="fas fa-volume-up text-green-500 ml-1" title="Avec audio"></i>{% endif %}
+                                            {% endif %}
+                                        </td>
+                                        <td class="px-4 py-2 text-gray-700">{{ format.filesize }}</td>
+                                        <td class="px-4 py-2 text-center">
+                                            <form method="POST" action="/download_selected" class="inline">
+                                                <input type="hidden" name="format_id" value="{{ format.format_id }}">
+                                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-3 rounded-md transition duration-300">
+                                                    <i class="fas fa-download mr-1"></i>Télécharger
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                <!-- Onglet Audio -->
+                                <tr class="border-t border-b-2 bg-blue-50">
+                                    <td colspan="3" class="px-4 py-2 font-bold text-blue-600">
+                                        <i class="fas fa-music mr-2"></i>Audio
+                                    </td>
+                                </tr>
+                                {% for format in video.formats %}
+                                    {% if format.type == 'audio' %}
+                                    <tr class="border-t hover:bg-blue-50">
+                                        <td class="px-4 py-2 text-gray-700">
+                                            {{ format.quality }}
+                                        </td>
+                                        <td class="px-4 py-2 text-gray-700">{{ format.filesize }}</td>
+                                        <td class="px-4 py-2 text-center">
+                                            <form method="POST" action="/download_selected" class="inline">
+                                                <input type="hidden" name="format_id" value="{{ format.format_id }}">
+                                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded-md transition duration-300">
+                                                    <i class="fas fa-download mr-1"></i>Télécharger
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
                                 {% endfor %}
                             </tbody>
                         </table>

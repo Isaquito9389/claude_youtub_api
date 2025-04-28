@@ -141,12 +141,23 @@ def get_video_formats(url):
             if not info:
                 return None
                 
-            formats = []
+            # Catégories pour organiser les formats
+            video_formats = []  # Vidéo avec audio
+            video_only_formats = []  # Vidéo sans audio
+            audio_formats = []  # Audio uniquement
+            
+            # Résolutions prioritaires à afficher (dans l'ordre décroissant)
+            priority_resolutions = [2160, 1440, 1080, 720, 480, 360]
+            
             # Filtrer les formats pour éliminer les doublons et formats mal formatés
             seen_qualities = set()
             
             for f in info.get('formats', []):
-                # Créer une clé unique pour chaque qualité
+                # Ignorer les formats mhtml et autres formats inutiles
+                if f.get('ext') in ['mhtml']:
+                    continue
+                    
+                # Récupérer la taille du fichier
                 filesize = f.get('filesize')
                 if filesize is None:
                     filesize = f.get('filesize_approx')
@@ -156,15 +167,19 @@ def get_video_formats(url):
                     continue
                 
                 format_id = f.get('format_id', '')
-                resolution = f.get('resolution', '')
+                resolution = f.get('resolution', '')  # Par exemple: "1920x1080"
                 ext = f.get('ext', '')
+                vcodec = f.get('vcodec', '')
+                acodec = f.get('acodec', '')
+                height = f.get('height')
                 
                 # Clé unique pour éviter les doublons
-                quality_key = f"{resolution}_{ext}_{format_id}"
+                quality_key = f"{resolution}_{ext}_{vcodec}_{acodec}"
                 
                 if quality_key not in seen_qualities:
                     seen_qualities.add(quality_key)
-                    formats.append({
+                    
+                    format_info = {
                         'format_id': format_id,
                         'quality': get_quality_label(f),
                         'resolution': resolution,
@@ -172,41 +187,88 @@ def get_video_formats(url):
                         'filesize': format_size(filesize),
                         'filesize_raw': filesize,
                         'width': f.get('width'),
-                        'height': f.get('height'),
+                        'height': height,
                         'fps': f.get('fps'),
-                        'vcodec': f.get('vcodec'),
-                        'acodec': f.get('acodec')
-                    })
+                        'vcodec': vcodec,
+                        'acodec': acodec,
+                        'has_audio': acodec != 'none',
+                        'has_video': vcodec != 'none'
+                    }
+                    
+                    # Simplifier la résolution pour l'affichage
+                    if height:
+                        format_info['display_resolution'] = f"{height}p"
+                    
+                    # Classer selon le type de format
+                    if vcodec != 'none' and acodec != 'none':
+                        video_formats.append(format_info)
+                    elif vcodec != 'none' and acodec == 'none':
+                        video_only_formats.append(format_info)
+                    elif vcodec == 'none' and acodec != 'none':
+                        audio_formats.append(format_info)
             
-            # Trier les formats par taille (si disponible) puis par résolution
-            formats.sort(key=lambda x: (
-                -(x.get('filesize_raw') or 0),
-                -(x.get('height') or 0),
-                -(x.get('width') or 0)
-            ))
+            # Trier et filtrer les formats vidéo pour privilégier les résolutions standard
+            selected_video_formats = []
+            for res in priority_resolutions:
+                # Chercher le meilleur format pour chaque résolution prioritaire
+                matches = [f for f in video_formats if f.get('height') == res]
+                if matches:
+                    # Trier par taille pour prendre le meilleur rapport qualité/taille
+                    matches.sort(key=lambda x: (-(x.get('filesize_raw') or 0)))
+                    selected_video_formats.append(matches[0])
             
-            # Ajouter l'option "best" en haut de la liste
-            formats.insert(0, {
+            # Si aucun format n'a été trouvé dans les résolutions prioritaires, utiliser ceux qu'on a
+            if not selected_video_formats and video_formats:
+                # Limiter à 5 formats maximum, triés par résolution
+                video_formats.sort(key=lambda x: (-(x.get('height') or 0)))
+                selected_video_formats = video_formats[:5]
+            
+            # Limiter le nombre de formats dans chaque catégorie
+            audio_formats.sort(key=lambda x: (-(x.get('filesize_raw') or 0)))
+            audio_formats = audio_formats[:2]  # Garder les 2 meilleures qualités audio
+            
+            # Fusionner les formats en gardant l'ordre des catégories
+            all_formats = []
+            
+            # Ajouter l'option "best" en haut de la liste avec une taille estimée
+            best_filesize = "Variable"
+            if selected_video_formats and selected_video_formats[0].get('filesize'):
+                best_filesize = format_size(selected_video_formats[0].get('filesize_raw') * 1.1)  # +10% d'estimation
+                
+            all_formats.append({
                 'format_id': 'best',
                 'quality': 'Meilleure qualité (recommandé)',
                 'resolution': 'Auto',
+                'display_resolution': 'Auto',
                 'ext': 'mp4',
-                'filesize': 'Variable',
-                'filesize_raw': None
+                'filesize': best_filesize,
+                'filesize_raw': selected_video_formats[0].get('filesize_raw') if selected_video_formats else None,
+                'has_audio': True,
+                'has_video': True,
+                'type': 'video'
             })
+            
+            # Ajouter les vidéos avec audio
+            for f in selected_video_formats:
+                f['type'] = 'video'
+                all_formats.append(f)
+                
+            # Ajouter les formats audio uniquement
+            for f in audio_formats:
+                f['type'] = 'audio'
+                all_formats.append(f)
             
             return {
                 'title': info.get('title', 'Vidéo sans titre'),
                 'thumbnail': info.get('thumbnail'),
                 'duration': info.get('duration'),
                 'uploader': info.get('uploader'),
-                'formats': formats
+                'formats': all_formats
             }
             
         except Exception as e:
             print(f"Erreur lors de l'extraction des formats: {e}")
             return None
-
 @app.route('/', methods=['GET'])
 def home():
     return render_template('index.html')
@@ -395,6 +457,14 @@ def serve_video(file_path):
     download_path = os.path.join(app.config['DOWNLOAD_FOLDER'], folder_id)
     
     return send_from_directory(download_path, filename, as_attachment=True)
+
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(app.static_folder, 'robots.txt')
+
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory(app.static_folder, 'sitemap.xml')
 
 @app.route('/health')
 def health_check():
