@@ -1,0 +1,100 @@
+<!-- templates/download.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Téléchargement - {{ video.title }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Meta tags SEO -->
+    <meta name="description" content="Téléchargez rapidement et gratuitement vos vidéos YouTube préférées en haute qualité (1080p, 720p, 480p, MP3). Convertisseur YouTube simple, sans inscription et sans publicité.">
+    <meta name="keywords" content="télécharger vidéo youtube, convertisseur youtube, youtube mp3, youtube downloader, youtube en mp4, télécharger youtube gratuit">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="YT Downloader">
+
+    <!-- Open Graph Tags pour les partages sociaux -->
+    <meta property="og:title" content="YT Downloader - Télécharger des vidéos YouTube Gratuitement">
+    <meta property="og:description" content="Téléchargez gratuitement vos vidéos YouTube préférées en HD, MP4, MP3 sans inscription. Simple, rapide et sécurisé.">
+    <meta property="og:image" content="{{ url_for('static', filename='img/yt-downloader-preview.jpg', _external=True) }}">
+    <meta property="og:url" content="{{ request.base_url }}">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="YT Downloader - Télécharger des vidéos YouTube Gratuitement">
+    <meta name="twitter:description" content="Téléchargez gratuitement vos vidéos YouTube préférées en HD, MP4, MP3 sans inscription. Simple, rapide et sécurisé.">
+    <meta name="twitter:image" content="{{ url_for('static', filename='img/yt-downloader-preview.jpg', _external=True) }}">
+
+    <!-- Balise canonique pour éviter le contenu dupliqué -->
+    <link rel="canonical" href="{{ request.base_url }}">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-red-600 mb-2">YT Downloader</h1>
+            <p class="text-gray-600">Votre vidéo est prête à être téléchargée</p>
+        </header>
+
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row gap-6">
+                    {% if video.thumbnail %}
+                    <div class="w-full md:w-1/3">
+                        <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="w-full h-auto rounded-md">
+                    </div>
+                    {% endif %}
+                    <div class="w-full md:w-2/3">
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">{{ video.title }}</h2>
+                        
+                        {% if video.uploader %}
+                        <p class="text-gray-600 mb-2">
+                            <i class="fas fa-user mr-2"></i>{{ video.uploader }}
+                        </p>
+                        {% endif %}
+                        
+                        {% if video.duration %}
+                        <p class="text-gray-600 mb-2">
+                            <i class="fas fa-clock mr-2"></i>{{ video.duration // 60 }}:{{ '%02d' % (video.duration % 60) }}
+                        </p>
+                        {% endif %}
+                        
+                        {% if video.format %}
+                        <p class="text-gray-600 mb-4">
+                            <i class="fas fa-cog mr-2"></i>Format: {{ video.format }}
+                        </p>
+                        {% endif %}
+                        
+                        <a href="{{ video.file_url }}" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-md transition duration-300 mt-4">
+                            <i class="fas fa-download mr-2"></i>Télécharger la vidéo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="/" class="inline-block text-red-600 hover:text-red-800 font-medium">
+                <i class="fas fa-arrow-left mr-2"></i>Retour à l'accueil
+            </a>
+        </div>
+
+        <div class="mt-10 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Plus de fonctionnalités</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="text-gray-700 mb-4">Votre vidéo est maintenant prête à être téléchargée. Cliquez sur le bouton "Télécharger la vidéo" pour commencer le téléchargement sur votre appareil.</p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 text-blue-700">
+                    <p class="font-bold">Note importante</p>
+                    <p>Ce lien de téléchargement est temporaire et expirera après une heure. Assurez-vous de télécharger votre vidéo dès maintenant.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-gray-600 text-sm">
+            <p>© 2025 YT Downloader - Application créée à des fins éducatives uniquement.</p>
+            <p class="mt-2">Veuillez respecter les droits d'auteur et les conditions d'utilisation de YouTube.</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /download_selected
+Disallow: /api/
+Disallow: /videos/
+
+Sitemap: https://yt-downloader-api-production-ddf9.up.railway.app/sitemap.xml

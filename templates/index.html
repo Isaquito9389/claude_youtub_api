@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Télécharger Vidéo YouTube Gratuit en MP4, MP3, HD - YT Downloader</title>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Meta tags SEO -->
+    <meta name="description" content="Téléchargez rapidement et gratuitement vos vidéos YouTube préférées en haute qualité (1080p, 720p, 480p, MP3). Convertisseur YouTube simple, sans inscription et sans publicité.">
+    <meta name="keywords" content="télécharger vidéo youtube, convertisseur youtube, youtube mp3, youtube downloader, youtube en mp4, télécharger youtube gratuit">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="YT Downloader">
+
+    <!-- Open Graph Tags pour les partages sociaux -->
+    <meta property="og:title" content="YT Downloader - Télécharger des vidéos YouTube Gratuitement">
+    <meta property="og:description" content="Téléchargez gratuitement vos vidéos YouTube préférées en HD, MP4, MP3 sans inscription. Simple, rapide et sécurisé.">
+    <meta property="og:image" content="{{ url_for('static', filename='img/yt-downloader-preview.jpg', _external=True) }}">
+    <meta property="og:url" content="{{ request.base_url }}">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="YT Downloader - Télécharger des vidéos YouTube Gratuitement">
+    <meta name="twitter:description" content="Téléchargez gratuitement vos vidéos YouTube préférées en HD, MP4, MP3 sans inscription. Simple, rapide et sécurisé.">
+    <meta name="twitter:image" content="{{ url_for('static', filename='img/yt-downloader-preview.jpg', _external=True) }}">
+
+    <!-- Balise canonique pour éviter le contenu dupliqué -->
+    <link rel="canonical" href="{{ request.base_url }}">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "YT Downloader",
+      "url": "https://yt-downloader-api-production-ddf9.up.railway.app/",
+      "description": "Téléchargez gratuitement vos vidéos YouTube préférées en haute qualité (1080p, 720p, 480p) ou en MP3. Service rapide sans inscription.",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "YT Downloader"
+      }
+    }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl font-bold text-red-600 mb-2">YT Downloader</h1>
+            <p class="text-gray-600">Téléchargez rapidement et gratuitement vos vidéos YouTube en MP4 HD (1080p, 720p) ou MP3</p>
+        </header>
+
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6">
+                {% if error_message %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <span class="font-bold">Erreur:</span> {{ error_message }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="/formats" class="space-y-4">
+                    <div>
+                        <label for="video_url" class="block text-gray-700 text-sm font-bold mb-2">URL de la vidéo YouTube</label>
+                        <input type="url" id="video_url" name="video_url" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                            placeholder="https://www.youtube.com/watch?v=..." required>
+                    </div>
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                        <i class="fas fa-search mr-2"></i>Rechercher les formats
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-10 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Comment ça marche ?</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                    <li>Copiez l'URL de la vidéo YouTube que vous souhaitez télécharger.</li>
+                    <li>Collez l'URL dans le champ ci-dessus.</li>
+                    <li>Cliquez sur "Rechercher les formats" pour voir les options disponibles.</li>
+                    <li>Choisissez le format et la qualité qui vous conviennent.</li>
+                    <li>Cliquez sur "Télécharger" pour le format choisi.</li>
+                    <li>Attendez que la vidéo soit téléchargée et traitée.</li>
+                    <li>Cliquez sur le bouton pour télécharger la vidéo sur votre appareil.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="mt-10 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Fonctionnalités</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">Rapide</h3>
+                    </div>
+                    <p class="text-gray-600">Téléchargement à haute vitesse des vidéos YouTube.</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">Sécurisé</h3>
+                    </div>
+                    <p class="text-gray-600">Pas de publicités, pas de logiciels malveillants.</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-desktop text-green-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">Choix de qualité</h3>
+                    </div>
+                    <p class="text-gray-600">Sélectionnez le format et la taille qui vous conviennent.</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-globe text-purple-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">Accessible</h3>
+                    </div>
+                    <p class="text-gray-600">Fonctionne sur tous les appareils et navigateurs.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section FAQ pour le SEO -->
+        <div class="mt-12 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Questions fréquentes</h2>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Comment télécharger une vidéo YouTube ?</h3>
+                    <p class="text-gray-700">Pour télécharger une vidéo YouTube, copiez simplement l'URL de la vidéo depuis YouTube, collez-la dans notre barre de recherche, choisissez le format souhaité (MP4, MP3, etc.) et cliquez sur "Télécharger". Notre outil s'occupe du reste !</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Est-ce que YT Downloader est gratuit ?</h3>
+                    <p class="text-gray-700">Oui, YT Downloader est totalement gratuit ! Notre service vous permet de télécharger des vidéos YouTube en différentes qualités (1080p, 720p, 480p, 360p) et formats (MP4, MP3) sans frais ni inscription.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Quels formats puis-je télécharger avec YT Downloader ?</h3>
+                    <p class="text-gray-700">Notre outil propose plusieurs formats : vidéo MP4 haute définition (1080p, 720p), définition standard (480p, 360p) et audio MP3. Vous pouvez choisir le format qui convient le mieux à vos besoins après avoir entré l'URL de la vidéo.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Est-ce légal de télécharger des vidéos YouTube ?</h3>
+                    <p class="text-gray-700">Le téléchargement est légal pour un usage personnel. Cependant, respectez les droits d'auteur et n'utilisez pas les contenus téléchargés à des fins commerciales sans autorisation. YT Downloader est conçu pour un usage éducatif et personnel.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section avantages pour le SEO -->
+        <div class="mt-12 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Pourquoi choisir YT Downloader ?</h2>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <ul class="space-y-3 text-gray-700">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span><strong>Téléchargement rapide</strong> - Convertissez et téléchargez des vidéos YouTube en quelques secondes</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span><strong>Haute qualité</strong> - Téléchargez en HD 1080p, 720p ou autres formats de votre choix</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span><strong>Sans inscription</strong> - Pas besoin de créer un compte pour utiliser notre service</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span><strong>Compatible tous appareils</strong> - Fonctionne sur ordinateurs, tablettes et smartphones</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span><strong>Sans publicité</strong> - Interface propre sans publicités intrusives</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                        <span><strong>Conversion MP3</strong> - Extrayez l'audio de n'importe quelle vidéo YouTube facilement</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-gray-600 text-sm">
+            <p>© 2025 YT Downloader - Application créée à des fins éducatives uniquement.</p>
+            <p class="mt-2">Veuillez respecter les droits d'auteur et les conditions d'utilisation de YouTube.</p>
+        </footer>
+    </div>
+</body>
+</html>
