@@ -153,7 +153,14 @@ def get_video_formats(url):
         'nocheckcertificate': True,
         'geo_bypass': True,
         'format_sort': ['res', 'fps', 'codec', 'size', 'br', 'asr'],
-        'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+        'cookiefile': None,
+        'extractor_retries': 10,
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'web', 'mobile', 'tv_embedded'],
+                'skip': ['webpage', 'dash', 'hls']
+            }
+        }
     }
     
     with YoutubeDL(options) as ydl:
@@ -380,7 +387,14 @@ def download_selected():
             'nocheckcertificate': True,
             'geo_bypass': True,
             'format_sort': ['res', 'fps', 'codec', 'size', 'br', 'asr'],
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'cookiefile': None,
+            'extractor_retries': 10,
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['android', 'web', 'mobile', 'tv_embedded'],
+                    'skip': ['webpage', 'dash', 'hls']
+                }
+            },
             'merge_output_format': 'mp4',
         }
         
@@ -444,7 +458,14 @@ def download_video_api():
             'nocheckcertificate': True,
             'geo_bypass': True,
             'format_sort': ['res', 'fps', 'codec', 'size', 'br', 'asr'],
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
+            'cookiefile': None,
+            'extractor_retries': 10,
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['android', 'web', 'mobile', 'tv_embedded'],
+                    'skip': ['webpage', 'dash', 'hls']
+                }
+            },
             'merge_output_format': 'mp4',
         }
         
